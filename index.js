@@ -49,27 +49,21 @@ module.exports.init = (app, done) => {
             {
                 url: auth_url,
                 method: 'get',
-                json: true,
                 headers: {
                     Authorization: `Bearer ${auth.password}`
                 }
             },
             ( error, response, body ) => {
                 /**
-                 * False to valid authentication
-                 * @type {bool}
+                 * Authentication : failed
+                 * @type {Error}
                  */
-                let raise_error = false;
-                if ( error ) { raise_error = true }
-                if ( response.statusCode !== 200 ) { raise_error = true }
-                if ( ( ( 'preferred_username' in body ) === false ) || ( typeof body.preferred_username !== 'string' ) ) { raise_error = true }
+                let err = new Error ( 'Authentication failed' );
+                err.responseCode = 535;
                 
-                if ( raise_error == true ) {
-                    // Authentication : failed
-                    let err = new Error ( 'Authentication failed' );
-                    err.responseCode = 535;
-                    return next ( err );
-                }
+                if ( error ) { return next ( err ); }
+                if ( response.statusCode !== 200 ) { return next ( err ); }
+                if ( ( ( 'preferred_username' in body ) === false ) || ( typeof body.preferred_username !== 'string' ) ) { return next ( err ); }
                 
                 app.logger.info (
                     'AUTHINFO',
