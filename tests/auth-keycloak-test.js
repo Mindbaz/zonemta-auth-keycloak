@@ -53,7 +53,36 @@ describe ( 'auth-keycloak', function () {
         expect ( get_args [ 'headers' ] [ 'Authorization' ] ).to.equal ( 'Bearer random-password' );
         
         expect ( log_info_stub.callCount ).to.equal ( 1 );
-        expect ( log_info_stub.getCalls () [ 0 ].args ).to.eql ( [ 'AUTHINFO', 'id=%s username="%s"', 'random-id', 'another-username' ] );
+        expect ( log_info_stub.getCalls () [ 0 ].args ).to.eql ( [ 'Plugins/auth-keycloak', 'AUTHINFO id=%s username="%s"', 'random-id', 'another-username' ] );
+        
+        expect ( done_fake.callCount ).to.equal ( 1 );
+        
+        expect ( next_fake.callCount ).to.equal ( 1 );
+        expect ( next_fake.getCalls () [ 0 ].args ).to.eql ( [] );
+        
+        log_info_stub.restore ();
+        get_stub.restore ();
+    } );
+    
+    
+    it ( 'Correct auth with body as string', function () {
+        var get_stub = sinon
+            .stub ( request, 'get' )
+            .yields ( null, { statusCode: 200 }, JSON.stringify ( { 'preferred_username': 'another-username' } ) );
+        
+        var log_info_stub = sinon
+            .stub ( app_mock.logger, 'info' );
+        
+        AuthKeycloak.init ( app_mock, done_fake );
+        
+        expect ( get_stub.callCount ).to.equal ( 1 );
+        var get_args = get_stub.getCalls () [ 0 ].args [ 0 ];
+        expect ( get_args [ 'url' ] ).to.equal ( 'random-keycloak-url/auth/realms/random-username/protocol/openid-connect/userinfo' );
+        expect ( get_args [ 'method' ] ).to.equal ( 'get' );
+        expect ( get_args [ 'headers' ] [ 'Authorization' ] ).to.equal ( 'Bearer random-password' );
+        
+        expect ( log_info_stub.callCount ).to.equal ( 1 );
+        expect ( log_info_stub.getCalls () [ 0 ].args ).to.eql ( [ 'Plugins/auth-keycloak', 'AUTHINFO id=%s username="%s"', 'random-id', 'another-username' ] );
         
         expect ( done_fake.callCount ).to.equal ( 1 );
         

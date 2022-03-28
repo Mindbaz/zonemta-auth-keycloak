@@ -63,11 +63,15 @@ module.exports.init = (app, done) => {
                 
                 if ( error ) { return next ( err ); }
                 if ( response.statusCode !== 200 ) { return next ( err ); }
+
+                if ( typeof body === 'string' ) {
+                    body = JSON.parse ( body );
+                }
                 if ( ( ( 'preferred_username' in body ) === false ) || ( typeof body.preferred_username !== 'string' ) ) { return next ( err ); }
                 
                 app.logger.info (
-                    'AUTHINFO',
-                    'id=%s username="%s"',
+                    'Plugins/auth-keycloak',
+                    'AUTHINFO id=%s username="%s"',
                     session.id,
                     body.preferred_username
                 );
