@@ -20,11 +20,9 @@
   
   SMTP authentication with Keycloak
   Validates tokens via API calls
-  Client id must be passed as "username" & Tokens as "password" during
-  authenticating.
   
-  Warning: keycloak use 'RS256' as default algorithm who generated
-  too long token. To works with ZMTA, use 'ES256' or 'HS256'.
+  Auth username must be a concatenation of keycloak realm, client_id &
+  username, exemple :  random-realm/random-client-id/random-username
 */
 
 const request = require ( 'request' );
@@ -40,40 +38,59 @@ module.exports.init = (app, done) => {
         }
         
         /**
+         * Authentication : failed
+         * @type {Error}
+         */
+        let err = new Error ( 'Authentication failed' );
+        err.responseCode = 535;
+        
+        if ( typeof ( auth.username ) !== 'string' ) {
+            return next ( err );
+        }
+        
+        /**
+         * Split Auth username into realm/client_id/username
+         * @type {string[]}
+         */
+        let [ realm, client_id, username ] = auth.username.split ( '/' );
+        
+        for ( let value of [ realm, client_id, username ] ) {
+            if ( ( typeof ( value ) !== 'string' ) || ( value.trim () === '' ) ) {
+                return next ( err );
+            }
+        }
+        
+        /**
          * Authentication Keycloak URL
          * @type {string}
          */
-        let auth_url = `${app.config.keycloak_url}/auth/realms/${auth.username}/protocol/openid-connect/userinfo`;
+        let auth_url = `${app.config.keycloak_url}/auth/realms/${realm}/protocol/openid-connect/token`;
         
-        request.get (
+        request.post (
             {
                 url: auth_url,
-                method: 'get',
+                method: 'post',
                 headers: {
-                    Authorization: `Bearer ${auth.password}`
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                form: {
+                    username: encodeURI ( username ),
+                    password: encodeURI ( auth.password ),
+                    grant_type: 'password',
+                    client_id: encodeURI ( client_id )
                 }
             },
-            ( error, response, body ) => {
-                /**
-                 * Authentication : failed
-                 * @type {Error}
-                 */
-                let err = new Error ( 'Authentication failed' );
-                err.responseCode = 535;
-                
+            ( error, response ) => {
                 if ( error ) { return next ( err ); }
                 if ( response.statusCode !== 200 ) { return next ( err ); }
-
-                if ( typeof body === 'string' ) {
-                    body = JSON.parse ( body );
-                }
-                if ( ( ( 'preferred_username' in body ) === false ) || ( typeof body.preferred_username !== 'string' ) ) { return next ( err ); }
                 
                 app.logger.info (
                     'Plugins/auth-keycloak',
-                    'AUTHINFO id=%s username="%s"',
+                    'AUTHINFO id=%s realm="%s" client_id="%s" username="%s"',
                     session.id,
-                    body.preferred_username
+                    realm,
+                    client_id,
+                    username
                 );
                 
                 // Authentication : success
