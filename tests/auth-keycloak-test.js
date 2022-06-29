@@ -23,7 +23,7 @@ describe ( 'auth-keycloak', function () {
             config: {
                 keycloak_url: 'random-keycloak-url',
                 interfaces: [ 'random-interface' ],
-                auth_force_realm: false
+                auth_force_realms: false
             },
             addHook: function ( type, cb ) {
                 cb ( auth_ds, session_ds, next_fake );
@@ -301,8 +301,8 @@ describe ( 'auth-keycloak', function () {
     
     
     it ( 'Correct auth with force realm', function () {
-        app_mock.config.auth_force_realm = true;
-        app_mock.config.auth_realm = 'random-realm';
+        app_mock.config.auth_force_realms = true;
+        app_mock.config.auth_realms = [ 'random-realm', 'another-realm' ];
         
         var post_stub = sinon
             .stub ( request, 'post' )
@@ -334,8 +334,8 @@ describe ( 'auth-keycloak', function () {
     
     
     it ( 'Wrong auth with force realm', function () {
-        app_mock.config.auth_force_realm = true;
-        app_mock.config.auth_realm = 'another-realm';
+        app_mock.config.auth_force_realms = true;
+        app_mock.config.auth_realms = [ 'another-realm' ];
         
         auth_ds [ 'username' ] = 'random-realm/random-client-id/random-username';
         

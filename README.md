@@ -33,8 +33,8 @@ auth_force_realm = false
 Optional : to force a realm on current zmta instance
 
 ```
-auth_force_realm = true
-auth_realm = 'random-realm'
+auth_force_realms = true
+auth_realms = [ 'random-realm', 'another-realm' ]
 ```
 
 ## License

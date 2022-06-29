@@ -60,7 +60,7 @@ module.exports.init = (app, done) => {
             }
         }
         
-        if ( ( app.config.auth_force_realm === true ) && ( realm !== app.config.auth_realm ) ) {
+        if ( ( app.config.auth_force_realms === true ) && ( app.config.auth_realms.includes ( realm ) === false ) ) {
             // Force auth realm check
             return next ( err );
         }

@@ -8,8 +8,10 @@ interfaces=["feeder"]
 # Boundary URL
 boundary_url="http://127.0.0.1:8080"
 
-## Force realm check auth
-auth_force_realm = false
+## Force check auth realms
+auth_force_realms = false
 
-## Realm value to valid. Required if auth_force_realm is true
-auth_realm = 'random-realm'
+## Realms value to valid. Required if auth_force_realms is true
+auth_realms = [
+  'random-realm'
+]
