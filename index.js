@@ -60,6 +60,11 @@ module.exports.init = (app, done) => {
             }
         }
         
+        if ( ( app.config.auth_force_realm === true ) && ( realm !== app.config.auth_realm ) ) {
+            // Force auth realm check
+            return next ( err );
+        }
+        
         /**
          * Authentication Keycloak URL
          * @type {string}

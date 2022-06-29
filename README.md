@@ -27,6 +27,14 @@ Then set keycloak configuration for this plugin :
 
 ```toml
 keycloak_url="http://example.org:8080"
+auth_force_realm = false
+```
+
+Optional : to force a realm on current zmta instance
+
+```
+auth_force_realm = true
+auth_realm = 'random-realm'
 ```
 
 ## License
