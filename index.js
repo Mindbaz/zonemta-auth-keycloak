@@ -69,7 +69,7 @@ module.exports.init = (app, done) => {
          * Authentication Keycloak URL
          * @type {string}
          */
-        let auth_url = `${app.config.keycloak_url}/auth/realms/${realm}/protocol/openid-connect/token`;
+        let auth_url = `${app.config.keycloak_url}/realms/${realm}/protocol/openid-connect/token`;
         
         request.post (
             {

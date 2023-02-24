@@ -40,3 +40,7 @@ auth_realms = [ 'random-realm', 'another-realm' ]
 ## License
 
 The GNU General Public License 3 ([details](https://www.gnu.org/licenses/quick-guide-gplv3.en.html))
+
+# Support version
+
+Keycloak : `>=20`

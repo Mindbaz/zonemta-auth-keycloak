@@ -49,7 +49,7 @@ describe ( 'auth-keycloak', function () {
         
         expect ( post_stub.callCount ).to.equal ( 1 );
         var get_args = post_stub.getCalls () [ 0 ].args [ 0 ];
-        expect ( get_args [ 'url' ] ).to.equal ( 'random-keycloak-url/auth/realms/random-realm/protocol/openid-connect/token' );
+        expect ( get_args [ 'url' ] ).to.equal ( 'random-keycloak-url/realms/random-realm/protocol/openid-connect/token' );
         expect ( get_args [ 'method' ] ).to.equal ( 'post' );
         expect ( get_args [ 'headers' ] ).to.eql ( { 'Content-Type': 'application/x-www-form-urlencoded' } );
         expect ( get_args [ 'form' ] ).to.eql ( { 'username': 'random-username', 'password': 'random-password', 'grant_type': 'password', 'client_id': 'random-client-id' } );
@@ -315,7 +315,7 @@ describe ( 'auth-keycloak', function () {
         
         expect ( post_stub.callCount ).to.equal ( 1 );
         var get_args = post_stub.getCalls () [ 0 ].args [ 0 ];
-        expect ( get_args [ 'url' ] ).to.equal ( 'random-keycloak-url/auth/realms/random-realm/protocol/openid-connect/token' );
+        expect ( get_args [ 'url' ] ).to.equal ( 'random-keycloak-url/realms/random-realm/protocol/openid-connect/token' );
         expect ( get_args [ 'method' ] ).to.equal ( 'post' );
         expect ( get_args [ 'headers' ] ).to.eql ( { 'Content-Type': 'application/x-www-form-urlencoded' } );
         expect ( get_args [ 'form' ] ).to.eql ( { 'username': 'random-username', 'password': 'random-password', 'grant_type': 'password', 'client_id': 'random-client-id' } );
