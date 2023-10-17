@@ -6,9 +6,15 @@ Authentication with Keycloak for [ZoneMTA](https://github.com/zone-eu/zone-mta).
 
 Add this as a dependency for your ZoneMTA app
 
-```
+```shell
 npm install @mindbaz/zonemta-auth-keycloak --save
 ```
+
+## Configure
+
+The module uses `wild-config`, so there are two `toml` configuration files to manage
+
+### Plugin conf
 
 Add a configuration entry in the "plugins" section of your ZoneMTA app
 
@@ -28,13 +34,16 @@ Then set keycloak configuration for this plugin :
 ```toml
 keycloak_url="http://example.org:8080"
 auth_force_realm = false
+auth_force_realms = true # Optional : to force a realm on current zmta instance
 ```
 
-Optional : to force a realm on current zmta instance
+### Wild-config
 
-```
-auth_force_realms = true
-auth_realms = [ 'random-realm', 'another-realm' ]
+ZoneMTA uses the following file for wild-config : `/path/to/zone-mta/config/zonemta.toml`
+
+```toml
+[auth_keycloak]
+realms = [ 'random-realm', 'another-realm' ]
 ```
 
 ## License

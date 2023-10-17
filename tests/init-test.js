@@ -2,11 +2,11 @@ const request = require ( 'request' );
 const chai = require ( 'chai' );
 const sinon = require ( 'sinon' );
 var expect = chai.expect;
+const rewire = require ( 'rewire' );
+var AuthKeycloak = rewire ( '../index.js' );
 
-var AuthKeycloak = require ( '../index.js' );
 
-
-describe ( 'auth-keycloak', function () {
+describe ( 'Test module init', function () {
     var app_mock = undefined;
     var done_mock = undefined;
     var auth_ds = undefined;
@@ -38,6 +38,9 @@ describe ( 'auth-keycloak', function () {
     
     
     it ( 'Correct auth', function () {
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( null, { statusCode: 200 } );
@@ -46,6 +49,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 1 );
         var get_args = post_stub.getCalls () [ 0 ].args [ 0 ];
@@ -70,6 +75,9 @@ describe ( 'auth-keycloak', function () {
     it ( 'Wrong : username', function () {
         auth_ds [ 'username' ] = 'random-realm/random-client-id';
         
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( null, null );
@@ -78,6 +86,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 0 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );
@@ -97,6 +107,9 @@ describe ( 'auth-keycloak', function () {
     it ( 'Empty : username', function () {
         auth_ds [ 'username' ] = 'random-realm/random-client-id/';
         
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( null, null );
@@ -105,6 +118,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 0 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );
@@ -124,6 +139,9 @@ describe ( 'auth-keycloak', function () {
     it ( 'Wrong : client-id', function () {
         auth_ds [ 'username' ] = 'random-realm';
         
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( null, null );
@@ -132,6 +150,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 0 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );
@@ -151,6 +171,9 @@ describe ( 'auth-keycloak', function () {
     it ( 'Empty : client-id', function () {
         auth_ds [ 'username' ] = 'random-realm/';
         
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( null, null );
@@ -159,6 +182,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 0 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );
@@ -178,6 +203,9 @@ describe ( 'auth-keycloak', function () {
     it ( 'Wrong : auth username / realm', function () {
         auth_ds [ 'username' ] = undefined;
         
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( null, null );
@@ -186,6 +214,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 0 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );
@@ -205,6 +235,9 @@ describe ( 'auth-keycloak', function () {
     it ( 'Empty : realm', function () {
         auth_ds [ 'username' ] = '';
         
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( null, null );
@@ -213,6 +246,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 0 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );
@@ -230,6 +265,9 @@ describe ( 'auth-keycloak', function () {
     
     
     it ( 'Request : response code <> 200', function () {
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( null, { statusCode: 0 } );
@@ -238,6 +276,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 1 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );
@@ -255,6 +295,9 @@ describe ( 'auth-keycloak', function () {
     
     
     it ( 'Request : error exists', function () {
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         var post_stub = sinon
             .stub ( request, 'post' )
             .yields ( 'random-error', null );
@@ -263,6 +306,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( post_stub.callCount ).to.equal ( 1 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );
@@ -280,6 +325,9 @@ describe ( 'auth-keycloak', function () {
     
     
     it ( 'Wrong interface', function () {
+        var is_realm_can_auth_stub = sinon.stub ();
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
+        
         session_ds [ 'interface' ] = 'another-interface';
         
         var post_stub = sinon
@@ -290,6 +338,8 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 0 );
         
         expect ( done_fake.callCount ).to.equal ( 1 );
         expect ( next_fake.callCount ).to.equal ( 2 );
@@ -302,7 +352,8 @@ describe ( 'auth-keycloak', function () {
     
     it ( 'Correct auth with force realm', function () {
         app_mock.config.auth_force_realms = true;
-        app_mock.config.auth_realms = [ 'random-realm', 'another-realm' ];
+        var is_realm_can_auth_stub = sinon.stub ().returns ( true );
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
         
         var post_stub = sinon
             .stub ( request, 'post' )
@@ -312,6 +363,11 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 1 );
+        const is_realm_can_auth_args = is_realm_can_auth_stub.getCall ( 0 ).args;
+        expect ( typeof ( is_realm_can_auth_args [ 0 ] ) ).to.be.equal ( 'object' );
+        expect ( is_realm_can_auth_args [ 1 ] ).to.be.equal ( 'random-realm' );
         
         expect ( post_stub.callCount ).to.equal ( 1 );
         var get_args = post_stub.getCalls () [ 0 ].args [ 0 ];
@@ -335,7 +391,9 @@ describe ( 'auth-keycloak', function () {
     
     it ( 'Wrong auth with force realm', function () {
         app_mock.config.auth_force_realms = true;
-        app_mock.config.auth_realms = [ 'another-realm' ];
+        
+        var is_realm_can_auth_stub = sinon.stub ().returns ( false );
+        AuthKeycloak.__set__ ( 'is_realm_can_auth', is_realm_can_auth_stub );
         
         auth_ds [ 'username' ] = 'random-realm/random-client-id/random-username';
         
@@ -347,6 +405,11 @@ describe ( 'auth-keycloak', function () {
             .stub ( app_mock.logger, 'info' );
         
         AuthKeycloak.init ( app_mock, done_fake );
+
+        expect ( is_realm_can_auth_stub.callCount ).to.equal ( 1 );
+        const is_realm_can_auth_args = is_realm_can_auth_stub.getCall ( 0 ).args;
+        expect ( typeof ( is_realm_can_auth_args [ 0 ] ) ).to.be.equal ( 'object' );
+        expect ( is_realm_can_auth_args [ 1 ] ).to.be.equal ( 'random-realm' );
         
         expect ( post_stub.callCount ).to.equal ( 0 );
         expect ( log_info_stub.callCount ).to.equal ( 0 );

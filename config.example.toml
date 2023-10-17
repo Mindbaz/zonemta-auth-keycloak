@@ -10,8 +10,3 @@ boundary_url="http://127.0.0.1:8080"
 
 ## Force check auth realms
 auth_force_realms = false
-
-## Realms value to valid. Required if auth_force_realms is true
-auth_realms = [
-  'random-realm'
-]

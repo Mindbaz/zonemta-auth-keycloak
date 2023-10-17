@@ -26,6 +26,21 @@
 */
 
 const request = require ( 'request' );
+const config = require ( 'wild-config' );
+
+
+/**
+ * Valid if domain to auth
+ *
+ * @param {object} config Wild config
+ * @param {string} realm Auth realm
+ *
+ * @returns {bool} True if the realm can auth. False otherwise
+ */
+const is_realm_can_auth = ( config, realm ) => {
+    return config.auth_keycloak.realms.includes ( realm );
+};
+
 
 module.exports.title = 'Keycloak Authentication';
 module.exports.init = (app, done) => {
@@ -60,9 +75,11 @@ module.exports.init = (app, done) => {
             }
         }
         
-        if ( ( app.config.auth_force_realms === true ) && ( app.config.auth_realms.includes ( realm ) === false ) ) {
-            // Force auth realm check
-            return next ( err );
+        if ( app.config.auth_force_realms === true ) {
+            if ( is_realm_can_auth ( config, realm ) === false ) {
+                // Force auth realm check
+                return next ( err );
+            }
         }
         
         /**
